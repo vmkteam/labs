@@ -1,0 +1,4 @@
+baseURL = 'https://vmkteam.pagges.dev/'
+languageCode = 'ru'
+title = 'vmkteam labs'
+theme = 'hugo-theme-monochrome'

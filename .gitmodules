@@ -1,0 +1,4 @@
+[submodule "themes/hugo-theme-monochrome"]
+	path = themes/hugo-theme-monochrome
+	url = https://github.com/cdietrich/hugo-theme-monochrome.git
+	branch = cd-disqus
