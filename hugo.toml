@@ -1,4 +1,4 @@
-baseURL = 'https://vmkteam.pagges.dev/'
+baseURL = 'https://vmkteam.pages.dev/'
 languageCode = 'ru'
 title = 'vmkteam labs'
 theme = 'hugo-theme-monochrome'

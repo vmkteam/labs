@@ -34,5 +34,5 @@ title = 'vmkteam labs'
 
 ### Инструменты 
 * [pgmigrator](https://github.com/vmkteam/pgmigrator) – простые миграции для postgresql
-* [colgen](https://github.com/vmkteam/colgen) – генератор сниппетов и не только
+* [colgen](https://github.com/vmkteam/colgen) – генератор сниппетов [и не только](/colgen/)
 * [mfd-generator](https://github.com/vmkteam/mfd-generator) – генератор разного кода
