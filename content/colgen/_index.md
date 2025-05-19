@@ -167,6 +167,18 @@ func (ll Tags) IndexByAlias() map[string]Tag {
 Теперь мы можем сконцентрироваться на решении практических задач, а утилитарный код отдать на откуп генератору.
 Единственное, на что надо обращать внимание: код перед вызовом генератора **должен компилироваться**, потому что идет парсинг go файлов через AST.
 
+#### Group(Field)
+Можно сгруппировать слайс по определенному полю. На выходе получим такой код `//colgen:News:Group(CategoryID)`:
+```go
+func (ll NewsList) GroupByCategoryID() map[int]NewsList {
+    r := make(map[int]NewsList, len(ll))
+    for i := range ll {
+        r[ll[i].CategoryID] = append(r[ll[i].CategoryID], ll[i])
+    }
+    return r
+}
+```
+
 _TLDR:_ Можно собрать все или уникальные значения по любому полю структуры или построить индекс в виде мапы.
 
 ### Map & MapP
