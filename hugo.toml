@@ -2,3 +2,31 @@ baseURL = 'https://vmkteam.pages.dev/'
 languageCode = 'ru'
 title = 'vmkteam labs'
 theme = 'hugo-theme-monochrome'
+
+[[menu.navbar]]
+identifier = "labs"
+name = "labs"
+title = "labs"
+url = "/"
+weight = 1
+
+[[menu.navbar]]
+identifier = "development"
+name = "development"
+url = "/development/"
+weight = 2
+
+[[menu.navbar]]
+identifier = "simple architecture"
+name = "simple architecture"
+url = "/simple-architecture/"
+weight = 3
+
+[[menu.navbar]]
+identifier = "colgen"
+name = "colgen"
+url = "/colgen/"
+weight = 4
+
+[params]
+footer = "Copyright © 2025 by <a href=\"https://t.me/vmkteamlabs\">@vmkteamlabs</a>"
