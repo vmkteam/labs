@@ -1,6 +1,7 @@
 +++
 title = 'Работа с API'
 date = '2025-10-04T16:00:00+03:00'
+author = 'sergeyfast'
 +++
 
 # Работа с API

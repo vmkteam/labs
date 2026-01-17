@@ -1,6 +1,7 @@
 +++
 title = 'Заметки: Архитектурный репозиторий'
 date = '2025-10-30T17:00:00+03:00'
+author = 'sergeyfast'
 +++
 
 # Заметки: Архитектурный репозиторий
@@ -69,6 +70,8 @@ go.mod
 * автоматическое построение сервисов из метрик метаданных [appkit](https://github.com/vmkteam/appkit/blob/master/metadata.go)
 * автоматическое построение межсервисного взаимодействия через HTTP на основе [appkit](https://github.com/vmkteam/appkit/blob/master/client.go)
 * построение техрадара на основе [датасета](https://github.com/thoughtworks/build-your-own-radar)
+
+[Посмотрите заметку про genc4](/development/genc4/)
 
 ## Почему не база знаний / wiki / confluence?
 
