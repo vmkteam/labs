@@ -1,6 +1,9 @@
 +++
 title = 'Colgen'
 author = 'sergeyfast'
+layout = 'single'
+date = '2025-05-18'
+lastmod = '2026-03-07'
 +++
 
 # Colgen
@@ -182,6 +185,136 @@ func (ll NewsList) GroupByCategoryID() map[int]NewsList {
 
 _TLDR:_ Можно собрать все или уникальные значения по любому полю структуры или построить индекс в виде мапы.
 
+### Новое в v0.1.3
+
+Допустим, наша структура `News` стала сложнее — появились связи с авторами и статусами:
+```go
+type News struct {
+	ID       int
+	Text     string
+	StatusID int
+	TagIDs   []int
+	Tags     []Tag
+	AuthorID *int
+	Author   *Author
+}
+```
+
+#### `<Field>` для указателей и слайсов
+Раньше `<Field>` работал только со скалярными полями. Теперь мы можем использовать его и с указателями, и со слайсами.
+
+Для скалярного поля `StatusID` всё как раньше — `//colgen:News:StatusID`:
+```go
+func (ll NewsList) StatusIDs() []int {
+	r := make([]int, len(ll))
+	for i := range ll {
+		r[i] = ll[i].StatusID
+	}
+	return r
+}
+```
+А вот для слайса `TagIDs []int` вместо `[][]int` мы получим плоский `[]int` — flatten. `//colgen:News:TagIDs`:
+```go
+func (ll NewsList) TagIDs() []int {
+	var r []int
+	for i := range ll {
+		r = append(r, ll[i].TagIDs...)
+	}
+	return r
+}
+```
+Для указателя `Author *Author` генератор добавит nil-check и разыменование. `//colgen:News:Author`:
+```go
+func (ll NewsList) Authors() []Author {
+	var r []Author
+	for i := range ll {
+		if ll[i].Author != nil {
+			r = append(r, *ll[i].Author)
+		}
+	}
+	return r
+}
+```
+Аналогично `Unique<Field>` теперь поддерживает `*T` поля: `//colgen:News:UniqueAuthorID` сгенерирует `UniqueAuthorIDs() []int` с nil-check и дедупликацией.
+
+#### Count(Field)
+Часто нам нужно посчитать, сколько элементов в списке имеют определённое значение поля. `//colgen:News:Count(StatusID)`:
+```go
+func (ll NewsList) CountByStatusID(v int) int {
+	var c int
+	for i := range ll {
+		if ll[i].StatusID == v {
+			c++
+		}
+	}
+	return c
+}
+```
+Теперь вместо ручного цикла пишем `news.CountByStatusID(1)`.
+
+#### Fill(Target,Junction)
+Допустим, мы загрузили список новостей и отдельно — список тегов и авторов. Нам нужно «заполнить» связи. Именно для этого и существует `Fill` — он принимает два аргумента: поле-приёмник и junction/FK поле. Режим определяется автоматически по типу junction.
+
+Для `[]int` junction (many-to-many). `//colgen:News:Fill(Tags,TagIDs)`:
+```go
+func (ll NewsList) FillTags(related Tags) NewsList {
+	index := related.Index()
+	for i := range ll {
+		for _, id := range ll[i].TagIDs {
+			if v, ok := index[id]; ok {
+				ll[i].Tags = append(ll[i].Tags, v)
+			}
+		}
+	}
+	return ll
+}
+```
+Для `*int` FK (one-to-one). `//colgen:News:Fill(Author,AuthorID)`:
+```go
+func (ll NewsList) FillAuthor(related Authors) NewsList {
+	index := related.Index()
+	for i := range ll {
+		if ll[i].AuthorID != nil {
+			if v, ok := index[*ll[i].AuthorID]; ok {
+				ll[i].Author = &v
+			}
+		}
+	}
+	return ll
+}
+```
+Использование:
+```go
+news = news.FillTags(tags).FillAuthor(authors)
+```
+Методы возвращают тот же список, поэтому их удобно чейнить.
+
+#### Cast(Interface)
+Если структура реализует интерфейс через pointer receiver, можно сгенерировать приведение всей коллекции к слайсу интерфейса. `//colgen:News:Cast(Searchable)`:
+```go
+func (ll NewsList) Searchables() []Searchable {
+	r := make([]Searchable, len(ll))
+	for i := range ll {
+		r[i] = &ll[i]
+	}
+	return r
+}
+```
+
+#### Group по слайсу (fan-out)
+Мы уже видели `Group(CategoryID)` для скалярного поля. Но что если нам нужно сгруппировать по slice-полю? Тогда один элемент попадёт в несколько групп. `//colgen:News:Group(TagIDs)`:
+```go
+func (ll NewsList) GroupByTagIDs() map[int]NewsList {
+	r := make(map[int]NewsList)
+	for i := range ll {
+		for _, v := range ll[i].TagIDs {
+			r[v] = append(r[v], ll[i])
+		}
+	}
+	return r
+}
+```
+
 ### Map & MapP
 Рассмотрим следующий пример:
 ```go
@@ -335,3 +468,23 @@ func newNewsSummary(in *db.News) *NewsSummary {
   * [Claude](review-claude/)
 * [README.md](https://github.com/vmkteam/colgen/blob/master/README.md) – на 95% сгенерирован.
 * [assistant_test.go](https://github.com/vmkteam/colgen/blob/master/pkg/colgen/assistant_test.go) – на 100% сгенерирован.
+
+## Навык для Claude Code
+
+Навык `/colgen` для [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) позволяет анализировать Go-кодовую базу и находить бойлерплейт, который можно заменить на colgen-генерацию.
+
+### Установка
+
+Скачайте [colgen.md](/colgen/colgen.md) в директорию команд Claude Code — глобально (`~/.claude/commands/`) или для проекта (`.claude/commands/`):
+```bash
+# глобально
+curl -o ~/.claude/commands/colgen.md https://vmkteam.pages.dev/colgen/colgen.md
+```
+
+### Пример использования
+
+```
+/colgen найди бойлерплейт в pkg/, который можно заменить на colgen-генерацию
+```
+
+Claude Code проанализирует Go-файлы и предложит конкретные `//colgen:` директивы для найденных паттернов: ручные циклы сбора полей, построение map/index, группировка, конструкторы слайсов и заполнение связей.
