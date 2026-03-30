@@ -478,7 +478,7 @@ func newNewsSummary(in *db.News) *NewsSummary {
 Скачайте [colgen.md](/colgen/colgen.md) в директорию команд Claude Code — глобально (`~/.claude/commands/`) или для проекта (`.claude/commands/`):
 ```bash
 # глобально
-curl -o ~/.claude/commands/colgen.md https://vmkteam.pages.dev/colgen/colgen.md
+curl -o ~/.claude/commands/colgen.md https://vmkteam.dev/colgen/colgen.md
 ```
 
 ### Пример использования
