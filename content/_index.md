@@ -35,7 +35,8 @@ title = 'vmkteam labs'
 * [cron](https://github.com/vmkteam/cron) - реализация крона с поддержкой middleware & ui
 * [vfs](https://github.com/vmkteam/vfs) – библиотека/сервис для работы с файлами самым простым образом
 
-### Инструменты 
+### Инструменты
+* [pcurl](https://github.com/vmkteam/pcurl) – безопасный curl для AI-агентов [и не только](/development/pcurl/)
 * [pgmigrator](https://github.com/vmkteam/pgmigrator) – простые миграции для postgresql
 * [colgen](https://github.com/vmkteam/colgen) – генератор сниппетов [и не только](/colgen/)
 * [mfd-generator](https://github.com/vmkteam/mfd-generator) – генератор разного кода

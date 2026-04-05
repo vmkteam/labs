@@ -116,8 +116,6 @@ title = 'Go Simple Architecture'
 * `syncsrv` – syncsrv (если данные надо переложить в public, то это возможно в рамках ответственности сервиса `syncsrv`)
 
 
-![alt](img.png "=350x")
-
 ```mermaid
 flowchart LR
  subgraph s1["newsportal db"]

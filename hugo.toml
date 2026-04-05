@@ -2,6 +2,7 @@ baseURL = 'https://vmkteam.dev/'
 languageCode = 'ru'
 title = 'vmkteam labs'
 theme = 'hugo-theme-monochrome'
+ignoreLogs = ['warning-partial-superfluous-prefix']
 
 [[menu.navbar]]
 identifier = "labs"
